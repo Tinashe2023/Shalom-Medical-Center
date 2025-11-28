@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="public/media/Shalom.png" alt="Shalom Medical Center Logo" width="600"/>
+</div>
+
 # 🏥 Shalom Medical Center - Appointment Management System
 
 A comprehensive healthcare management system built with React, TypeScript, and Node.js. This application streamlines appointment scheduling, patient management, and medical record keeping for healthcare facilities.
