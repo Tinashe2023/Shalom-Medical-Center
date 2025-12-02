@@ -18,6 +18,7 @@ const patientRoutes = require('./routes/patients');
 const appointmentRoutes = require('./routes/appointments');
 const medicalRecordRoutes = require('./routes/medical-records');
 const statsRoutes = require('./routes/stats');
+const aiRoutes = require('./routes/ai');
 
 // Use routes
 app.use('/api/auth', authRoutes);
@@ -27,6 +28,7 @@ app.use('/api/patients', patientRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/medical-records', medicalRecordRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

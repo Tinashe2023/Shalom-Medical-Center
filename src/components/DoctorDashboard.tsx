@@ -8,6 +8,7 @@ import { DoctorSchedule } from './DoctorSchedule';
 import { DoctorPatientHistory } from './DoctorPatientHistory';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { AIAssistant } from './AIAssistant';
 import { appointmentsAPI } from '../lib/api';
 
 interface DoctorDashboardProps {
@@ -34,9 +35,21 @@ export function DoctorDashboard({ user, onLogout }: DoctorDashboardProps) {
         (apt: any) => apt.doctor_id === user.id && apt.status === 'scheduled'
       );
 
-      const today = new Date().toISOString().split('T')[0];
-      const todayAppointments = doctorAppointments.filter((apt: any) => apt.appointment_date === today);
-      const upcomingAppointments = doctorAppointments.filter((apt: any) => apt.appointment_date >= today);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = today.toISOString().split('T')[0]; // "2025-12-01"
+
+      const todayAppointments = doctorAppointments.filter((apt: any) => {
+        // Extract date from appointment_date (handles ISO timestamp format)
+        const aptDateStr = apt.appointment_date.split('T')[0];
+        return aptDateStr === todayStr;
+      });
+
+      const upcomingAppointments = doctorAppointments.filter((apt: any) => {
+        // Extract date from appointment_date
+        const aptDateStr = apt.appointment_date.split('T')[0];
+        return aptDateStr >= todayStr;
+      });
 
       // Count unique patients
       const uniquePatients = new Set(doctorAppointments.map((apt: any) => apt.patient_id));
@@ -122,6 +135,11 @@ export function DoctorDashboard({ user, onLogout }: DoctorDashboardProps) {
       </div>
 
       <Footer />
+
+      {/* AI Assistant */}
+      <AIAssistant
+        welcomeMessage="Ask me about your schedule, patient information, or appointment statistics!"
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { PatientList } from './PatientList';
 import { AppointmentManager } from './AppointmentManager';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { AIAssistant } from './AIAssistant';
 import { generateDoctorData, generatePatientData } from '../lib/data-init';
 import { toast } from 'sonner';
 import { doctorsAPI, patientsAPI, appointmentsAPI } from '../lib/api';
@@ -140,6 +141,11 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
       </div>
 
       <Footer />
+
+      {/* AI Assistant */}
+      <AIAssistant
+        welcomeMessage="Ask me about system analytics, user management, or operational insights!"
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { PatientMedicalHistory } from './PatientMedicalHistory';
 import { PatientProfile } from './PatientProfile';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { AIAssistant } from './AIAssistant';
 import { appointmentsAPI, medicalRecordsAPI } from '../lib/api';
 
 interface PatientDashboardProps {
@@ -37,10 +38,19 @@ export function PatientDashboard({ user, onLogout }: PatientDashboardProps) {
 
       const patientAppointments = appointments.filter((apt: any) => apt.patient_id === user.id);
 
-      const today = new Date().toISOString().split('T')[0];
-      const upcoming = patientAppointments.filter(
-        (apt: any) => apt.status === 'scheduled' && apt.appointment_date >= today
-      );
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset to start of day for accurate comparison
+
+      const upcoming = patientAppointments.filter((apt: any) => {
+        if (apt.status !== 'scheduled') return false;
+
+        // Extract date from appointment_date (handles both "YYYY-MM-DD" and ISO timestamp formats)
+        const aptDate = new Date(apt.appointment_date);
+        aptDate.setHours(0, 0, 0, 0); // Reset to start of day
+
+        return aptDate >= today;
+      });
+
       const completed = patientAppointments.filter((apt: any) => apt.status === 'completed');
 
       const patientRecords = records.filter((rec: any) => rec.patient_id === user.id);
@@ -135,6 +145,11 @@ export function PatientDashboard({ user, onLogout }: PatientDashboardProps) {
       </div>
 
       <Footer />
+
+      {/* AI Assistant */}
+      <AIAssistant
+        welcomeMessage="Ask me about your appointments, medical history, or how to book a doctor!"
+      />
     </div>
   );
 }

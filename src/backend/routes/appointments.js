@@ -209,10 +209,11 @@ router.post('/', authenticateToken, async (req, res) => {
       queuePosition = await getNextQueuePosition(doctorId, date);
 
       // Create queued appointment (no specific time slot)
+      // Use TO_DATE() to ensure date is stored correctly without timezone conversion
       await db.query(
         `INSERT INTO appointments 
          (id, patient_id, doctor_id, appointment_date, appointment_time, reason, status, queue_position)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         VALUES ($1, $2, $3, TO_DATE($4, 'YYYY-MM-DD'), $5, $6, $7, $8)`,
         [appointmentId, patientId, doctorId, date, time || '00:00', reason, status, queuePosition]
       );
     } else {
@@ -221,7 +222,7 @@ router.post('/', authenticateToken, async (req, res) => {
         const conflict = await db.query(
           `SELECT id FROM appointments
            WHERE doctor_id = $1
-           AND appointment_date = $2
+           AND DATE(appointment_date) = TO_DATE($2, 'YYYY-MM-DD')
            AND appointment_time = $3
            AND status != 'cancelled'`,
           [doctorId, date, time]
@@ -233,10 +234,11 @@ router.post('/', authenticateToken, async (req, res) => {
       }
 
       // Create scheduled appointment
+      // Use TO_DATE() to ensure date is stored correctly without timezone conversion
       await db.query(
         `INSERT INTO appointments 
          (id, patient_id, doctor_id, appointment_date, appointment_time, reason, status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'scheduled')`,
+         VALUES ($1, $2, $3, TO_DATE($4, 'YYYY-MM-DD'), $5, $6, 'scheduled')`,
         [appointmentId, patientId, doctorId, date, time, reason]
       );
     }

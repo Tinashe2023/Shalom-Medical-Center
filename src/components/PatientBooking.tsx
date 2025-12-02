@@ -146,10 +146,13 @@ export function PatientBooking({ patientId, onDataChange }: PatientBookingProps)
 
     setLoading(true);
     try {
+      // Ensure date is in YYYY-MM-DD format without timezone conversion
+      const appointmentDate = bookingData.date; // Already in YYYY-MM-DD format from input
+
       const response: any = await appointmentsAPI.create({
         patientId,
         doctorId: selectedDoctor.id,
-        date: bookingData.date,
+        date: appointmentDate,
         time: bookingData.time,
         reason: bookingData.reason,
         allowQueue

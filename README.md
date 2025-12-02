@@ -29,6 +29,13 @@ A comprehensive healthcare management system built with React, TypeScript, and N
 - 📝 **Appointment Oversight** - View and manage all appointments
 - 🔐 **Security Controls** - Manage access and permissions
 
+### 🤖 AI Assistant (NEW!)
+- 💬 **Intelligent Chat Interface** - Ask questions in natural language
+- 🔍 **Database-Aware Responses** - Get real-time information from your system
+- 👤 **Role-Based Context** - Personalized assistance for patients, doctors, and admins
+- 🏠 **Local Processing** - All AI runs locally via LMStudio for complete privacy
+- 📊 **Smart Insights** - Get analytics, statistics, and operational recommendations
+
 ## 🛠️ Technology Stack
 
 ### Frontend
@@ -48,6 +55,7 @@ A comprehensive healthcare management system built with React, TypeScript, and N
 - **JWT** - Secure authentication
 - **Bcrypt** - Password hashing
 - **Nodemailer** - Email service integration
+- **LMStudio SDK** - Local AI integration
 
 ## 🚀 Getting Started
 
@@ -122,6 +130,19 @@ A comprehensive healthcare management system built with React, TypeScript, and N
 3. **Access the application**
    - Frontend: `http://localhost:5173`
    - Backend API: `http://localhost:5000`
+
+### Setting Up AI Assistant (Optional)
+
+To enable the AI assistant feature:
+
+1. **Install LMStudio** from [https://lmstudio.ai](https://lmstudio.ai)
+2. **Download the AI model**: `qwen/qwen3-4b-2507` (approximately 4GB)
+3. **Start LMStudio server** on port 1234
+4. **Restart your backend** - it will automatically connect to LMStudio
+
+For detailed setup instructions, see [AI_SETUP.md](AI_SETUP.md)
+
+> **Note**: The AI assistant requires at least 8GB RAM and runs completely locally for privacy.
 
 ## 📁 Project Structure
 
