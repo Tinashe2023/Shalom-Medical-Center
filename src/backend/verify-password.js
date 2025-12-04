@@ -1,8 +1,17 @@
 const bcrypt = require('bcryptjs');
 const db = require('./db');
+require('dotenv').config();
 
 async function verifyPassword() {
     try {
+        // Validate environment variables
+        if (!process.env.SEED_ADMIN_PASSWORD) {
+            console.error('ERROR: SEED_ADMIN_PASSWORD environment variable is missing!');
+            console.error('Please set it in your .env file.');
+            console.error('\nSee .env.example for reference.');
+            process.exit(1);
+        }
+
         // First, check total users
         const countResult = await db.query('SELECT COUNT(*) FROM users');
         console.log('Total users in database:', countResult.rows[0].count);
@@ -22,8 +31,7 @@ async function verifyPassword() {
             console.log('\n❌ Admin user not found in database');
 
             // Generate correct hash
-            const correctHash = await bcrypt.hash('admin123', 10);
-            console.log('\nCorrect hash for "admin123":', correctHash);
+            const correctHash = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD, 10);
             console.log('\nTo fix, run this SQL:');
             console.log(`INSERT INTO users (id, email, password, role, name, phone, email_verified) VALUES ('admin-1', 'admin@hospital.com', '${correctHash}', 'admin', 'System Admin', '555-0000', true) ON CONFLICT (email) DO UPDATE SET password = '${correctHash}';`);
 
@@ -33,11 +41,10 @@ async function verifyPassword() {
         const user = result.rows[0];
         console.log('\n✓ User found:', user.email);
         console.log('Stored password hash length:', user.password.length);
-        console.log('Stored password hash:', user.password);
 
-        // Test password
-        const testPassword = 'admin123';
-        console.log('\nTesting password:', testPassword);
+        // Test password from environment variable
+        const testPassword = process.env.SEED_ADMIN_PASSWORD;
+        console.log('\nTesting password from environment variable...');
 
         const match = await bcrypt.compare(testPassword, user.password);
         console.log('Password match:', match ? '✓ YES' : '❌ NO');
@@ -45,7 +52,6 @@ async function verifyPassword() {
         if (!match) {
             // Generate new hash
             const newHash = await bcrypt.hash(testPassword, 10);
-            console.log('\nNewly generated hash:', newHash);
 
             // Test new hash
             const newMatch = await bcrypt.compare(testPassword, newHash);

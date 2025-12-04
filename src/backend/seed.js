@@ -6,17 +6,41 @@ async function seedDatabase() {
   try {
     console.log('Starting database seeding...');
 
-    // Hash passwords
-    const adminPassword = await bcrypt.hash('admin123', 10);
-    const doctorPassword = await bcrypt.hash('doctor123', 10);
-    const patientPassword = await bcrypt.hash('patient123', 10);
+    // Validate environment variables
+    if (!process.env.SEED_ADMIN_PASSWORD || !process.env.SEED_DOCTOR_PASSWORD || !process.env.SEED_PATIENT_PASSWORD) {
+      console.error('ERROR: Required environment variables are missing!');
+      console.error('Please set the following in your .env file:');
+      console.error('  - SEED_ADMIN_PASSWORD');
+      console.error('  - SEED_DOCTOR_PASSWORD');
+      console.error('  - SEED_PATIENT_PASSWORD');
+      console.error('\nSee .env.example for reference.');
+      process.exit(1);
+    }
+
+    // Hash passwords from environment variables
+    const adminPassword = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD, 10);
+    const doctorPassword = await bcrypt.hash(process.env.SEED_DOCTOR_PASSWORD, 10);
+    const patientPassword = await bcrypt.hash(process.env.SEED_PATIENT_PASSWORD, 10);
+
+    // Delete existing seed data first
+    console.log('Clearing existing seed data...');
+    await db.query(`DELETE FROM medical_records WHERE id IN ('rec-1', 'rec-2')`);
+    await db.query(`DELETE FROM appointments WHERE id IN ('apt-1', 'apt-2', 'apt-3')`);
+    await db.query(`
+      DELETE FROM time_slots WHERE availability_id IN (
+        SELECT id FROM doctor_availability WHERE doctor_id IN ('doc-1', 'doc-2', 'doc-3', 'doc-4', 'doc-5')
+      )
+    `);
+    await db.query(`DELETE FROM doctor_availability WHERE doctor_id IN ('doc-1', 'doc-2', 'doc-3', 'doc-4', 'doc-5')`);
+    await db.query(`DELETE FROM patients WHERE id IN ('pat-1', 'pat-2', 'pat-3')`);
+    await db.query(`DELETE FROM doctors WHERE id IN ('doc-1', 'doc-2', 'doc-3', 'doc-4', 'doc-5')`);
+    await db.query(`DELETE FROM users WHERE id IN ('admin-1', 'doc-1', 'doc-2', 'doc-3', 'doc-4', 'doc-5', 'pat-1', 'pat-2', 'pat-3')`);
 
     // Create admin user
     console.log('Creating admin user...');
     await db.query(`
       INSERT INTO users (id, email, password, role, name, phone, email_verified)
       VALUES ('admin-1', 'admin@hospital.com', $1, 'admin', 'System Admin', '555-0000', true)
-      ON CONFLICT (email) DO NOTHING
     `, [adminPassword]);
 
     // Create sample doctors
@@ -69,14 +93,12 @@ async function seedDatabase() {
       await db.query(`
         INSERT INTO users (id, email, password, role, name, phone, email_verified)
         VALUES ($1, $2, $3, 'doctor', $4, $5, true)
-        ON CONFLICT (email) DO NOTHING
       `, [doctor.id, doctor.email, doctorPassword, doctor.name, doctor.phone]);
 
       // Insert doctor info
       await db.query(`
         INSERT INTO doctors (id, specialization, experience)
         VALUES ($1, $2, $3)
-        ON CONFLICT (id) DO NOTHING
       `, [doctor.id, doctor.specialization, doctor.experience]);
 
       // Create availability
@@ -87,17 +109,13 @@ async function seedDatabase() {
         const availResult = await db.query(`
           INSERT INTO doctor_availability (doctor_id, day_of_week, available)
           VALUES ($1, $2, $3)
-          ON CONFLICT (doctor_id, day_of_week) DO UPDATE SET available = $3
           RETURNING id
         `, [doctor.id, day, available]);
 
         if (available && availResult.rows.length > 0) {
           const availId = availResult.rows[0].id;
 
-          // Delete existing slots
-          await db.query('DELETE FROM time_slots WHERE availability_id = $1', [availId]);
-
-          // Insert new slots
+          // Insert time slots
           await db.query(`
             INSERT INTO time_slots (availability_id, start_time, end_time)
             VALUES ($1, '09:00', '12:00'), ($1, '14:00', '17:00')
@@ -143,14 +161,12 @@ async function seedDatabase() {
       await db.query(`
         INSERT INTO users (id, email, password, role, name, phone, email_verified)
         VALUES ($1, $2, $3, 'patient', $4, $5, true)
-        ON CONFLICT (email) DO NOTHING
       `, [patient.id, patient.email, patientPassword, patient.name, patient.phone]);
 
       // Insert patient info
       await db.query(`
         INSERT INTO patients (id, date_of_birth, blood_group, address)
         VALUES ($1, $2, $3, $4)
-        ON CONFLICT (id) DO NOTHING
       `, [patient.id, patient.dateOfBirth, patient.bloodGroup, patient.address]);
     }
 
@@ -200,9 +216,6 @@ async function seedDatabase() {
         INSERT INTO appointments 
         (id, patient_id, doctor_id, appointment_date, appointment_time, reason, status, diagnosis, prescription, notes)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-        ON CONFLICT (doctor_id, appointment_date, appointment_time) 
-        WHERE status != 'cancelled'
-        DO NOTHING
       `, [
         apt.id,
         apt.patientId,
@@ -250,7 +263,6 @@ async function seedDatabase() {
         INSERT INTO medical_records 
         (id, patient_id, doctor_id, record_date, diagnosis, prescription, notes, blood_pressure, heart_rate, temperature)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-        ON CONFLICT (id) DO NOTHING
       `, [
         record.id,
         record.patientId,
@@ -266,10 +278,11 @@ async function seedDatabase() {
     }
 
     console.log('Database seeding completed successfully!');
-    console.log('\nDefault credentials:');
-    console.log('Admin: admin@hospital.com / admin123');
-    console.log('Doctor: dr.smith@hospital.com / doctor123');
-    console.log('Patient: john.doe@email.com / patient123');
+    console.log('\nDefault user accounts created:');
+    console.log('Admin: admin@hospital.com');
+    console.log('Doctor: dr.smith@hospital.com (and 4 others)');
+    console.log('Patient: john.doe@email.com (and 2 others)');
+    console.log('\nUse the passwords you set in your .env file to login.');
 
     process.exit(0);
   } catch (error) {

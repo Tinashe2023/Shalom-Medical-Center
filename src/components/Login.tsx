@@ -153,11 +153,12 @@ export function Login({ onLogin, onRegister, onBackToHome }: LoginProps) {
               </div>
 
               <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <p className="text-sm text-muted-foreground mb-2">Demo Credentials:</p>
+                <p className="text-sm text-muted-foreground mb-2">Demo Accounts Available:</p>
                 <div className="space-y-1 text-xs">
-                  <p><strong>Admin:</strong> admin@hospital.com / admin123</p>
-                  <p><strong>Doctor:</strong> dr.smith@hospital.com / doctor123</p>
-                  <p><strong>Patient:</strong> john.doe@email.com / patient123</p>
+                  <p><strong>Admin:</strong> admin@hospital.com</p>
+                  <p><strong>Doctor:</strong> dr.smith@hospital.com</p>
+                  <p><strong>Patient:</strong> john.doe@email.com</p>
+                  <p className="text-xs text-muted-foreground mt-2">Contact your administrator for login credentials.</p>
                 </div>
               </div>
             </CardContent>

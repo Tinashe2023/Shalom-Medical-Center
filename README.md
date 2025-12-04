@@ -92,24 +92,53 @@ A comprehensive healthcare management system built with React, TypeScript, and N
 
 5. **Configure environment variables**
    
-   Create a `.env` file in `src/backend/` with the following:
-   ```env
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=your_database_name
-   DB_USER=your_database_user
-   DB_PASSWORD=your_database_password
-   JWT_SECRET=your_jwt_secret_key
-   EMAIL_USER=your_email@gmail.com
-   EMAIL_PASS=your_email_app_password
-   PORT=5000
+   Create a `.env` file in `src/backend/` directory. You can use `.env.example` as a template:
+   
+   ```bash
+   cd src/backend
+   cp .env.example .env
    ```
+   
+   Then edit the `.env` file with your actual values:
+   
+   ```env
+   # Database Configuration
+   DATABASE_URL=postgresql://username:password@localhost:5432/hospital_db
+   
+   # JWT Secret (use a long random string)
+   JWT_SECRET=your-secret-key-here-change-this-to-a-long-random-string
+   
+   # Email Configuration
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASSWORD=your-app-password
+   
+   # Seed Data Passwords (for development/testing only)
+   # IMPORTANT: Use strong, unique passwords for each role
+   SEED_ADMIN_PASSWORD=your-secure-admin-password
+   SEED_DOCTOR_PASSWORD=your-secure-doctor-password
+   SEED_PATIENT_PASSWORD=your-secure-patient-password
+   
+   # LM Studio Configuration (for AI assistant)
+   LM_STUDIO_URL=http://localhost:1234
+   ```
+   
+   > **⚠️ IMPORTANT**: Never commit the `.env` file to version control. It's already in `.gitignore` to prevent accidental commits.
 
 6. **Seed the database (optional)**
+   
+   This will create sample users (admin, doctors, patients) with the passwords you set in your `.env` file:
+   
    ```bash
    cd src/backend
    npm run seed
    ```
+   
+   After seeding, you can login with:
+   - **Admin**: admin@hospital.com (password from `SEED_ADMIN_PASSWORD`)
+   - **Doctor**: dr.smith@hospital.com (password from `SEED_DOCTOR_PASSWORD`)
+   - **Patient**: john.doe@email.com (password from `SEED_PATIENT_PASSWORD`)
 
 ### Running the Application
 

@@ -1,10 +1,13 @@
 // Initialize sample data for the application
+// WARNING: This file is for localStorage initialization only (legacy code)
+// Real authentication should use the backend API with proper password hashing
 export const initializeData = () => {
   // Admin user (pre-created)
+  // NOTE: Password is a placeholder - real passwords are managed by backend
   const admin = {
     id: 'admin-1',
     email: 'admin@hospital.com',
-    password: 'admin123',
+    password: 'PLACEHOLDER_USE_BACKEND_API',
     role: 'admin',
     name: 'System Admin'
   };
@@ -14,7 +17,7 @@ export const initializeData = () => {
     {
       id: 'doc-1',
       email: 'dr.smith@hospital.com',
-      password: 'doctor123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'doctor',
       name: 'Dr. Sarah Smith',
       specialization: 'Cardiology',
@@ -25,7 +28,7 @@ export const initializeData = () => {
     {
       id: 'doc-2',
       email: 'dr.johnson@hospital.com',
-      password: 'doctor123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'doctor',
       name: 'Dr. Michael Johnson',
       specialization: 'Pediatrics',
@@ -36,7 +39,7 @@ export const initializeData = () => {
     {
       id: 'doc-3',
       email: 'dr.williams@hospital.com',
-      password: 'doctor123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'doctor',
       name: 'Dr. Emily Williams',
       specialization: 'Dermatology',
@@ -47,7 +50,7 @@ export const initializeData = () => {
     {
       id: 'doc-4',
       email: 'dr.brown@hospital.com',
-      password: 'doctor123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'doctor',
       name: 'Dr. James Brown',
       specialization: 'Orthopedics',
@@ -58,7 +61,7 @@ export const initializeData = () => {
     {
       id: 'doc-5',
       email: 'dr.davis@hospital.com',
-      password: 'doctor123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'doctor',
       name: 'Dr. Lisa Davis',
       specialization: 'Neurology',
@@ -73,7 +76,7 @@ export const initializeData = () => {
     {
       id: 'pat-1',
       email: 'john.doe@email.com',
-      password: 'patient123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'patient',
       name: 'John Doe',
       phone: '555-1001',
@@ -84,7 +87,7 @@ export const initializeData = () => {
     {
       id: 'pat-2',
       email: 'jane.smith@email.com',
-      password: 'patient123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'patient',
       name: 'Jane Smith',
       phone: '555-1002',
@@ -95,7 +98,7 @@ export const initializeData = () => {
     {
       id: 'pat-3',
       email: 'robert.wilson@email.com',
-      password: 'patient123',
+      password: 'PLACEHOLDER_USE_BACKEND_API',
       role: 'patient',
       name: 'Robert Wilson',
       phone: '555-1003',
@@ -208,15 +211,15 @@ export const generateDoctorData = () => {
   const specializations = ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Dermatology', 'General Medicine', 'Psychiatry'];
   const firstNames = ['John', 'Sarah', 'Michael', 'Emily', 'David', 'Lisa', 'Robert', 'Jennifer'];
   const lastNames = ['Anderson', 'Taylor', 'Martinez', 'Garcia', 'Rodriguez', 'Lee', 'Walker', 'Hall'];
-  
+
   const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
   const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
   const randomSpec = specializations[Math.floor(Math.random() * specializations.length)];
-  
+
   return {
     id: `doc-${Date.now()}`,
     email: `dr.${randomLast.toLowerCase()}${Math.floor(Math.random() * 1000)}@hospital.com`,
-    password: 'doctor123',
+    password: 'PLACEHOLDER_USE_BACKEND_API',
     role: 'doctor',
     name: `Dr. ${randomFirst} ${randomLast}`,
     specialization: randomSpec,
@@ -230,14 +233,14 @@ export const generatePatientData = () => {
   const firstNames = ['Alex', 'Chris', 'Jordan', 'Morgan', 'Taylor', 'Casey', 'Riley', 'Drew'];
   const lastNames = ['Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Anderson', 'Thomas', 'Jackson'];
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-  
+
   const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
   const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
-  
+
   return {
     id: `pat-${Date.now()}`,
     email: `${randomFirst.toLowerCase()}.${randomLast.toLowerCase()}${Math.floor(Math.random() * 1000)}@email.com`,
-    password: 'patient123',
+    password: 'PLACEHOLDER_USE_BACKEND_API',
     role: 'patient',
     name: `${randomFirst} ${randomLast}`,
     phone: `555-${Math.floor(1000 + Math.random() * 9000)}`,
