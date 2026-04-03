@@ -2,9 +2,16 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
+const rateLimit = require('express-rate-limit');
+
+// Rate limiter for user-related routes to prevent abuse
+const userLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
 
 // Get current user info
-router.get('/me', authenticateToken, async (req, res) => {
+router.get('/me', userLimiter, authenticateToken, async (req, res) => {
   try {
     const { id, role } = req.user;
     
@@ -45,7 +52,7 @@ router.get('/me', authenticateToken, async (req, res) => {
 });
 
 // Get all users (Admin only)
-router.get('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.get('/', userLimiter, authenticateToken, authorizeRole('admin'), async (req, res) => {
   try {
     const result = await db.query(`
       SELECT id, email, role, name, phone, created_at
